@@ -1,30 +1,59 @@
 const fs = require("fs");
+const chalk = require("chalk");
 
 class Note {
   constructor() {}
 
-  _verify(title, path) {
-    let isThere = true;
+  _load() {
+    let notes = [];
 
     try {
-      fs.readFileSync(`${path}/${title}.json`);
+      const rawData = fs.readFileSync("./data/notes.json");
+      const jsonData = rawData.toString(); // Turns on a string (json format)
+      const data = JSON.parse(jsonData);
+
+      notes = data;
     } catch (e) {
-      isThere = false;
+      console.error(chalk.red("Something went wrong in the loading. ") + e);
     }
 
-    return isThere;
+    return notes;
   }
 
-  add(title, body, path = "./src/data") {
-    if (this._verify(title, path)) {
-      console.log("The file already exists and it will be overwritten");
+  _verify(notes, title) {
+    return notes.some((note) => note.title === title);
+  }
+
+  _save(notes) {
+    try {
+      const jsonData = JSON.stringify(notes);
+      fs.writeFileSync("./data/notes.json", jsonData);
+      console.log(chalk.green("Note saved successfully"));
+    } catch (e) {
+      console.error(chalk.red("Something went wrong in the saving. ") + e);
+    }
+  }
+
+  add(title, body) {
+    const notes = this._load();
+
+    if (this._verify(notes, title)) {
+      console.error(
+        chalk.red("There is already a note with this title. ") +
+          "Try the " +
+          chalk.bold("update") +
+          " command"
+      );
+
+      return;
     }
 
-    try {
-      fs.writeFileSync(`${path}/${title}.json`, body.toString().trim());
-    } catch (e) {
-      console.error("Something went wrong " + e);
-    }
+    notes.push({
+      title,
+      body,
+    });
+
+    this._save(notes);
   }
 }
 

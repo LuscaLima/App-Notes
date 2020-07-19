@@ -27,9 +27,16 @@ yargs.command(
       description: "Define the directory where the note will be save",
       type: "string",
     },
+
+    ext: {
+      describe: "Note extension",
+      alias: "e",
+      description: "Define the file extension",
+      type: "string",
+    },
   },
   (argv) => {
-    Note.add(argv.title, argv.body, argv.path);
+    Note.add(argv.title, argv.body, argv.path, argv.ext);
   }
 );
 
