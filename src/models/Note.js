@@ -24,13 +24,13 @@ class Note {
     return notes.some((note) => note.title === title);
   }
 
-  _save(notes) {
+  _save(notes, action = "saved") {
     try {
       const jsonData = JSON.stringify(notes);
       fs.writeFileSync("./data/notes.json", jsonData);
-      console.log(chalk.green("Note saved successfully"));
+      console.log(chalk.green(`Note ${action} successfully`));
     } catch (e) {
-      console.error(chalk.red("Something went wrong in the saving. ") + e);
+      console.error(chalk.red("Something went wrong. ") + e);
     }
   }
 
@@ -53,7 +53,21 @@ class Note {
       body,
     });
 
-    this._save(notes);
+    this._save(notes, "Note removed successfully");
+  }
+
+  remove(title) {
+    const notes = this._load();
+
+    if (!this._verify(notes, title)) {
+      console.error(chalk.red("There is not a note with this title. "));
+
+      return;
+    }
+
+    const remainNotes = notes.filter((note) => note.title !== title);
+
+    this._save(remainNotes, "removed");
   }
 }
 

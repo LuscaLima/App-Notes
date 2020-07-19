@@ -20,20 +20,6 @@ yargs.command(
       description: "This is the content of your note",
       type: "string",
     },
-
-    path: {
-      describe: "Note path",
-      alias: "p",
-      description: "Define the directory where the note will be save",
-      type: "string",
-    },
-
-    ext: {
-      describe: "Note extension",
-      alias: "e",
-      description: "Define the file extension",
-      type: "string",
-    },
   },
   (argv) => {
     Note.add(argv.title, argv.body, argv.path, argv.ext);
@@ -44,9 +30,16 @@ yargs.command(
 yargs.command(
   "remove",
   "Remove a note",
-  () => {},
-  () => {
-    console.log("Removing a note!");
+  {
+    title: {
+      describe: "Note title",
+      alias: "t",
+      demandOption: true,
+      type: "string",
+    },
+  },
+  (argv) => {
+    Note.remove(argv.title);
   }
 );
 
