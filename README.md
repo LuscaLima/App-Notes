@@ -6,9 +6,9 @@ This is a small learning project from Node.js. Here the Node.js File System API 
 
 #### 💻 Environment
 
-1. Node.js
+1. Node.js (v. 12.15.0), for execute JS in server-side
 
 #### 📚 Libs
 
-1. yargs
-1. chalk
+1. yargs, for provide a pretty parser to create a Command Line Interface (CLI)
+1. chalk, for styling (colors) of texts
