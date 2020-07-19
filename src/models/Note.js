@@ -56,7 +56,7 @@ class Note {
       body,
     });
 
-    this._save(notes, "Note removed successfully");
+    this._save(notes, "removed");
   }
 
   update(title, body) {
@@ -65,7 +65,7 @@ class Note {
 
     if (updateNote) {
       updateNote.body = body;
-      this._save(notes, "Note updated successfully");
+      this._save(notes, "updated");
     } else {
       error(
         chalk.red("There is already a note with this title. ") +
