@@ -1,6 +1,9 @@
 const fs = require("fs");
 const chalk = require("chalk");
 
+/** UTILS */
+const { log, error } = console;
+
 class Note {
   constructor() {}
 
@@ -14,7 +17,7 @@ class Note {
 
       notes = data;
     } catch (e) {
-      console.error(chalk.red("Something went wrong in the loading. ") + e);
+      error(chalk.red("Something went wrong in the loading. ") + e);
     }
 
     return notes;
@@ -28,9 +31,9 @@ class Note {
     try {
       const jsonData = JSON.stringify(notes);
       fs.writeFileSync("./data/notes.json", jsonData);
-      console.log(chalk.green(`Note ${action} successfully`));
+      log(chalk.green(`Note ${action} successfully`));
     } catch (e) {
-      console.error(chalk.red("Something went wrong. ") + e);
+      error(chalk.red("Something went wrong. ") + e);
     }
   }
 
@@ -38,7 +41,7 @@ class Note {
     const notes = this._load();
 
     if (this._verify(notes, title)) {
-      console.error(
+      error(
         chalk.red("There is already a note with this title. ") +
           "Try the " +
           chalk.bold("update") +
@@ -56,18 +59,56 @@ class Note {
     this._save(notes, "Note removed successfully");
   }
 
+  update(title, body) {
+    const notes = this._load();
+    const updateNote = notes.find((note) => note.title === title);
+
+    if (updateNote) {
+      updateNote.body = body;
+      this._save(notes, "Note updated successfully");
+    } else {
+      error(
+        chalk.red("There is already a note with this title. ") +
+          "Try the " +
+          chalk.bold("add") +
+          " command"
+      );
+    }
+  }
+
   remove(title) {
     const notes = this._load();
-
-    if (!this._verify(notes, title)) {
-      console.error(chalk.red("There is not a note with this title. "));
-
-      return;
-    }
-
     const remainNotes = notes.filter((note) => note.title !== title);
 
-    this._save(remainNotes, "removed");
+    if (notes.length > remainNotes.length) {
+      this._save(remainNotes, "removed");
+    } else {
+      error(chalk.red("There is not a note with this title."));
+    }
+  }
+
+  read(title) {
+    const notes = this._load();
+    const readNote = notes.find((note) => note.title === title);
+
+    if (readNote) {
+      log(chalk.inverse(":: " + readNote.title + " ::"));
+      log(readNote.body);
+      log();
+    } else {
+      error(chalk.red("There is not a note with this title."));
+    }
+  }
+
+  list() {
+    const notes = this._load();
+
+    log(chalk.bgBlue.white.bold("  YOUR NOTES  ") + "\n");
+
+    notes.forEach((note) => {
+      log(chalk.inverse(":: " + note.title + " ::"));
+      log();
+    });
   }
 }
 
